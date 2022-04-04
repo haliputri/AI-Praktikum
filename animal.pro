@@ -1,46 +1,36 @@
+% Program Prolog Pengklasifikasian Hewan Berdasarkan Makananan
+% Kelompok 10:
+    % Hali Putri Aisyah     - 140810200006
+    % Zhillan Thafhan Ahda  - 140810200018
+    % Fasya Nurina Izzati   - 140810200052
+
 %Knowledge Base
 animal(herbivora) :-
     memiliki_gigi_seri(yes),
-    memiliki_gigi_geraham(yes),
-    memiliki_gigi_taring(no),
-    pemakan_daging(no),
-    pemakan_tumbuhan(yes),
-    pemakan_biji(yes).
+    memiliki_gigi_taring(no).
 animal(karnivora) :-
     memiliki_gigi_seri(yes),
-    memiliki_gigi_geraham(yes),
     memiliki_gigi_taring(yes),
-    pemakan_daging(yes),
-    pemakan_tumbuhan(no),
-    pemakan_biji(no).
+    memiliki_gigi_geraham(no).
 animal(omnivora) :-
     memiliki_gigi_seri(yes),
-    memiliki_gigi_geraham(yes),
     memiliki_gigi_taring(yes),
-    pemakan_daging(yes),
-    pemakan_tumbuhan(yes),
-    pemakan_biji(yes).
+    memiliki_gigi_geraham(yes).
 
 %Asking for The User
 memiliki_gigi_seri(X) :-
     menuask(memiliki_gigi_seri, X, [yes,no]).
-memiliki_gigi_geraham(X) :-
-    menuask(memiliki_gigi_geraham, X, [yes,no]).
 memiliki_gigi_taring(X) :-
     menuask(memiliki_gigi_taring, X, [yes,no]).
-pemakan_daging(X) :-
-    menuask(pemakan_daging, X, [yes,no]).
-pemakan_tumbuhan(X) :-
-    menuask(pemakan_tumbuhan, X, [yes,no]).
-pemakan_biji(X) :-
-    menuask(pemakan_biji, X, [yes,no]).
+memiliki_gigi_geraham(X) :-
+    menuask(memiliki_gigi_geraham, X, [yes,no]).
 
 menuask(A,V,_) :-
     known(yes,A,V), !. %succeed if true, stop looking.
 menuask(A,V,_) :-
     alreadyasked(yes,A), !, fail.
 menuask(A,V,MenuList) :-
-    write('Apakah '), write(A), write('?'), nl,
+    write('\nApakah '), write(A), write('?'), nl,
     write([MenuList]), nl,
     read(X),
     check_val(X,A,V,MenuList),
@@ -52,7 +42,7 @@ menuask(A,V,MenuList) :-
 check_val(X,_A,_V,MenuList) :- 
     member(X,MenuList), !. 
 check_val(X,A,V,MenuList) :-
-    write(X), write(' sayang sekali, input yang diberikan salah. coba lagi :)'), nl, 
+    write(X), write('\n sayang sekali, input yang diberikan salah. coba lagi :)'), nl, 
     menuask(A,V,MenuList).
 
 %Rules Clause Member
@@ -67,29 +57,35 @@ solve :-
     abolish(known,3),
     abolish(alreadyasked,2),
     top_goal(X),
-    write('Nah, jadi hewan tersebut masuk klasifikasi '), write(X), nl.
+    write('                 Nah, klasifikasi hewan: '), write(X), nl, nl.    
 solve :-
-    write('Yha, jawabannya gaada :('), nl. 
-
+    write('                         Yha, jawabannya gaada :(\n'), nl. 
 
 %Loop
 go :-
     greeting,
     repeat,
-    write('> '),
+    write(' > '),
     read(X),
-    do(X),
-    X==quit.
+    ((X==quit)->do(quit) ; do(X), prompt, fail).
+
+prompt :-
+    write('======================================================================='), nl,
+    write('          Enter [start.] untuk memulai - [quit.] untuk keluar          '), nl,
+    write('======================================================================='), nl.
 
 greeting :-
-    write('Selamat Datang di Program Pengklasifikasian Hewan berdasarkan Jenis Makanan'), nl,
-    write('masukkan start atau quit pada prompt!'), nl.
+    write('======================================================================='), nl,
+    write('       Program Pengklasifikasian Hewan berdasarkan Jenis Makanan       '), nl,
+    prompt.
 
 %Running Program
 do(start) :- solve, !.
 
 %Quit Program
-do(quit).
+do(quit) :-
+    write('\n----------- Terima kasih, program ini telah berakhir :) ------------').
+
 do(X) :- write(X), write(', input yang diberikan salah.'), nl, fail.
 
 /* Handle Undefined Procedure */
